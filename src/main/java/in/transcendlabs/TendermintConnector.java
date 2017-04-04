@@ -79,7 +79,7 @@ public class TendermintConnector implements IDeliverTx, ICheckTx, ICommit, Webso
         if (isValidWord(word)) {
             return Types.ResponseCheckTx.newBuilder().setCode(Types.CodeType.OK).build();
         } else {
-            return Types.ResponseCheckTx.newBuilder().setCode(Types.CodeType.BaseInvalidSequence).setData(ByteString.copyFromUtf8("Word does not match the required specifications. 1. Word should be lower case English alphabets. 2. Word should start with last character of the previous word.")).build();
+            return Types.ResponseCheckTx.newBuilder().setCode(Types.CodeType.BaseInvalidSequence).setLog("Word does not match the required specifications. 1. Word should be lower case English alphabets. 2. Word should start with last character of the previous word.").build();
         }
     }
 
@@ -96,7 +96,11 @@ public class TendermintConnector implements IDeliverTx, ICheckTx, ICommit, Webso
             words.add(word);
             return Types.ResponseDeliverTx.newBuilder().setCode(Types.CodeType.OK).build();
         } else {
-            return Types.ResponseDeliverTx.newBuilder().setCode(Types.CodeType.BaseInvalidSequence).setData(ByteString.copyFromUtf8("Word does not match the required specifications. 1. Word should be lower case English alphabets. 2. Word should start with last character of the previous word.")).build();
+            String lastWord = null;
+            if (words.size() > 0) {
+                lastWord = words.get(words.size() - 1);
+            }
+            return Types.ResponseDeliverTx.newBuilder().setCode(Types.CodeType.BaseInvalidSequence).setLog("Word does not match the required specifications. 1. Word should be lower case English alphabets. 2. Word should start with last character of the previous word. {last word: " + lastWord + "}" ).build();
         }
     }
 
